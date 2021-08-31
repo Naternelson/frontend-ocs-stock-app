@@ -8,7 +8,7 @@ const ControlledInput = props => {
     const dispatch = useDispatch()
     condition = condition || function(){return true}
 
-    style = style + " input-group"
+    style = style ? style + " input-group" : "input-group"
     const changeHandler = e => {
         try{
             const {value, name} = e.target
