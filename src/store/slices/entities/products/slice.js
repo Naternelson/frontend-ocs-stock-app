@@ -1,18 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
-const initialState =  {}
-const slice = createSlice({
-    name: 'newProductForm',
-    initialState,
-    reducers: {
-        changed: (s, a) => {
-            const {name, value} = a.payload 
-            s[name] = value 
-        },
-        cleared: () => {
-            return initialState
-        }
-    }
-})
+import standardEntity from "../../helpers/standardEntitySlice";
 
-export default slice.reducer
-export const {changed, cleared} = slice.actions
+const productSlice = standardEntity({
+    attributes: ["name", "sku", "description"],
+    name: "products",
+    indexes: ["sku"]
+})
+export default productSlice.reducer
+export const {...actions} = slice.actions
