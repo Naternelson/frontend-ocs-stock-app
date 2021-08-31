@@ -1,14 +1,27 @@
 import FormPropHelper from "./FormPropHelper"
+import { useDispatch, useSelector } from "react-redux"
+
 const ControlledInput = props => {
-    let {id, name, label, style, change} = FormPropHelper(props)
+    let {id, name, label, style, change, selector, action, condition} = FormPropHelper(props)
+    // console.log({selector, props})
+    const state = useSelector(selector)
+    const dispatch = useDispatch()
+    condition = condition || function(){return true}
+
     style = style + " input-group"
     const changeHandler = e => {
-        console.group("Change Occurred in input", e)
-        if(change) change(e.target.value)
+        try{
+            const {value, name} = e.target
+            console.group("Change Occurred in input", name, value)
+            if(change) change(value)
+            if(action && condition(value)) dispatch(action({name: e.target.name.toLowerCase(), value}))
+        } catch (err){
+            console.error(err)
+        }
     }
     return <div className={style}>
-        <label for={name}>{label}</label>
-        <input name={name} id={id} onChange={changeHandler}></input>
+        <label htmlFor={name}>{label}</label>
+        <input name={name} id={id} onChange={changeHandler} value={state}></input>
     </div>
 }
 

@@ -10,6 +10,7 @@ const FormPropHelper = (props) => {
     id = id.toLowerCase()
     name = name ? name.toLowerCase() : id ? id : label ? label.toLowerCase() : ""
     label = label ? titleCase(label) : titleCase(name) 
-    return {id, name, label}
+    // console.log({...props, id, name, label})
+    return {...props, id, name, label}
 }
 export default FormPropHelper
