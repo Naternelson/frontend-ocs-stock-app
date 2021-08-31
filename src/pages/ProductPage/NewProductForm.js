@@ -5,13 +5,20 @@ import ControlledForm from "../../components/ControlledForm"
 import SubmitButton from "../../components/Button/SubmitButton"
 import getNested from "../../utilities/nestedObject"
 import { changed, cleared } from "../../store/slices/pages/product/newFormSlice"
+import {add} from "../../store/slices/entities/products/slice"
 
 const NewProductForm = props => {
     const dispatch = useDispatch()
+    const formInputs = useSelector(s => s.pages.products.newProductForm)
+    const submitFn = ()=> {
+        
+        dispatch(add(formInputs))
+    }
     const selectorFn = (aspect) => {
         const arr = ["pages", "products", "newProductForm", aspect]
         return getNested(...arr)
     }
+    const 
     return <ControlledForm>
         <h2>New Product</h2>
         <ControlledInput name={"name"} id={"product-name-input"} label={"Product Name"} selector={selectorFn("name")}  action={changed}/>
