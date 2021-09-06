@@ -1,27 +1,69 @@
 import FormPropHelper from "./FormPropHelper"
 import { useDispatch, useSelector } from "react-redux"
+import { selectorFn } from "../../utilities/nestedObject"
 
 const ControlledInput = props => {
-    let {id, name, label, style, change, selector, action, condition} = FormPropHelper(props)
-    // console.log({selector, props})
-    const state = useSelector(selector)
+    let {id, name, label, style, change, selector, blur, focus} = FormPropHelper(props)
+    
+    // const {
+    //     dispatcher,
+    //     condition,
+    //     callback,
+    //     onSuccess,
+    //     successMessage,
+    //     onError,
+    //     errorMessage
+    // } = change
+    // const {
+    //     dispatcher,
+    //     condition, 
+    //     callback,
+    //     onSuccess,
+    //     successMessage,
+    //     onError, 
+    //     errorMessage
+    // } = blur
+    
+    const state = useSelector(selectorFn(selector + ".value"))
+    const successMessage = useSelector(selectorFn(selector + ".successMessage"))
+    const errorMessage = useSelector(selectorFn(selector + ".errorMessage"))
     const dispatch = useDispatch()
-    condition = condition || function(){return true}
-
     style = style ? style + " input-group" : "input-group"
-    const changeHandler = e => {
+
+    const eventHandler = (params) => (e) => {
         try{
             const {value, name} = e.target
-            console.group("Change Occurred in input", name, value)
-            if(change) change(value)
-            if(action && condition(value)) dispatch(action({name: e.target.name.toLowerCase(), value}))
+            const condition = change.condition || (()=>true)
+            const check = condition(value)
+            let successMessage, errorMessage 
+            name = name.toLowerCase()
+            if(check){
+                const afterSuccess = params.onSuccess || (() => {})
+                afterSuccess(value)
+                if(params.successMessage) successMessage = params.successMessage(value)
+            } else {
+                const afterError = params.onError || (() => {})
+                afterError(value)
+                if(params.errorMessage) errorMessage = params.errorMessage(value)
+            }
+            if (params.dispatcher) dispatch(params.dispatcher({ name, value, error:check, errorMessage, successMessage}))
+            
         } catch (err){
             console.error(err)
         }
     }
+
+
+
+    const changeHandler = eventHandler(change)
+    const blurHandler = eventHandler(blur)
+    const focusHandler = eventHandler(focus)
+
     return <div className={style}>
         <label htmlFor={name}>{label}</label>
-        <input name={name} id={id} onChange={changeHandler} value={state}></input>
+        <input name={name} id={id} onChange={changeHandler} onBlur={blurHandler} onFocus={focusHandler} value={state}></input>
+        {successMessage && <p className={"success-message"} htmlFor={name}>{successMessage}</p>}
+        {errorMessage && <p className={"error-message"} htmlFor={name}>{errorMessage}</p>}
     </div>
 }
 

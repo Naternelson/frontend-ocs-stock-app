@@ -7,4 +7,4 @@ const initialState =  {
     }
 const slice = staticFormSlice("newProductForm", initialState)
 export default slice.reducer
-export const {changed, cleared} = slice.actions
+export const {changed, cleared, verified} = slice.actions

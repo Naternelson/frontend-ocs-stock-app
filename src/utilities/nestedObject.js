@@ -1,7 +1,6 @@
 export default function getNested(...arr) {
     return obj => {
         try {
-            console.log({obj, arr})
             arr.forEach(a => {
                 obj = obj[a]
             })
@@ -10,4 +9,8 @@ export default function getNested(...arr) {
             return undefined
         }
     }
+}
+export const selectorFn = (aspect) => {
+    let selector = typeof aspect === "string" ? str.split(".") : typeof aspect === "array" ? aspect : null  
+    return getNested(...selector)
 }

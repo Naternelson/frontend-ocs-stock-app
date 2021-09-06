@@ -1,3 +1,4 @@
+
 import standardEntity from "../../helpers/standardEntitySlice";
 
 const productSlice = standardEntity({
@@ -6,4 +7,4 @@ const productSlice = standardEntity({
     indexes: ["sku"]
 })
 export default productSlice.reducer
-export const {...actions} = slice.actions
+export const {add,modify,remove,addAttribute,removeAttribute,addIndex,removeIndex,resetData} = productSlice.actions 

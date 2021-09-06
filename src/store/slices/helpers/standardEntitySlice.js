@@ -1,3 +1,4 @@
+import { createSlice } from "@reduxjs/toolkit"
 const standardKey = (obj, key, defaultValue) => {
     if (key in obj) return
     obj[key] = defaultValue
@@ -5,17 +6,14 @@ const standardKey = (obj, key, defaultValue) => {
 
 const standardEntity = (config) => {
     standardKey(config, "attributes", [])
-    standardKey(config, "name", ""),
+    standardKey(config, "name", "")
     standardKey(config, "reducers", {})
     standardKey(config, "indexes", [])
-
-
     let {attributes, name, reducers, indexes} = config
 
     attributes.unshift("id")
     attributes = [...new Set(attributes)] //Attributes should be unique
-
-    indexes.filter(i => attributes.find(i)) //Indexes should be an attribute
+    indexes.filter(i => !!attributes.find(a => a == i)) //Indexes should be an attribute
 
     const initialState = {
         name,
@@ -23,10 +21,11 @@ const standardEntity = (config) => {
         data: {},
         indexes: {}
     }
-    indexes.forEach(i => intialState[i] = {})
+    indexes.forEach(i => initialState.indexes[i] = {})
 
     const add = (state, action) => {
-        if(!action.payload.id in state.data){
+        console.log({id: action.payload.id, data: state.data, truthy: action.payload.id in state.data})
+        if(!(action.payload.id in state.data)){
             const id = action.payload.id
             const newEntry = {}
             state.attributes.forEach(a => {
